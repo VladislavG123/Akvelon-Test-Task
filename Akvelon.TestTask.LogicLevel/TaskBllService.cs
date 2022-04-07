@@ -6,13 +6,13 @@ using AutoMapper;
 
 namespace Akvelon.TestTask.LogicLevel;
 
-public class TaskBll : ITaskBll 
+public class TaskBllService : ITaskBllService 
 {
     private readonly ITaskProvider _taskProvider;
     private readonly IProjectProvider _projectProvider;
     private readonly IMapper _mapper;
 
-    public TaskBll(ITaskProvider taskProvider, IProjectProvider projectProvider, IMapper mapper)
+    public TaskBllService(ITaskProvider taskProvider, IProjectProvider projectProvider, IMapper mapper)
     {
         _taskProvider = taskProvider;
         _projectProvider = projectProvider;

@@ -1,7 +1,7 @@
+using Akvelon.TestTask.Contracts.ViewModels;
 using Akvelon.TestTask.DAL.DTOs;
 using Akvelon.TestTask.LogicLevel.Abstract;
 using Akvelon.TestTask.LogicLevel.DTOs;
-using Akvelon.TestTask.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +10,12 @@ namespace Akvelon.TestTask.Controllers;
 [Route("/api/projects")]
 public class ProjectController : ControllerBase
 {
-    private readonly IProjectBll _projectBll;
+    private readonly IProjectBllService _projectBllService;
     private readonly IMapper _mapper;
 
-    public ProjectController(IProjectBll projectBll, IMapper mapper)
+    public ProjectController(IProjectBllService projectBllService, IMapper mapper)
     {
-        _projectBll = projectBll;
+        _projectBllService = projectBllService;
         _mapper = mapper;
     }
 
@@ -27,7 +27,7 @@ public class ProjectController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(ProjectFilteringViewModel filtering)
     {
-        var result = await _projectBll
+        var result = await _projectBllService
             .GetAll(_mapper.Map<ProjectFilteringDto>(filtering), filtering.Ordering, filtering.Descending);
 
         return Ok(result.Select(x => _mapper.Map<ProjectViewModel>(x)).ToList());
@@ -43,7 +43,7 @@ public class ProjectController : ControllerBase
     {
         try
         {
-            var result = await _projectBll.GetById(id);
+            var result = await _projectBllService.GetById(id);
 
             return Ok(_mapper.Map<ProjectViewModel>(result));
         }
@@ -61,7 +61,7 @@ public class ProjectController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ProjectCreationViewModel creationViewModel)
     {
-        await _projectBll.Create(
+        await _projectBllService.Create(
             _mapper.Map<ProjectCreationDto>(creationViewModel));
 
         return Ok();
@@ -70,14 +70,21 @@ public class ProjectController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id)
     {
-        await Task.Run(() => { });
-        return Ok();
+        return Problem("Not implemented");
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await Task.Run(() => { });
+        try
+        {
+            await _projectBllService.Delete(id);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
+        
         return Ok();
     }
 }

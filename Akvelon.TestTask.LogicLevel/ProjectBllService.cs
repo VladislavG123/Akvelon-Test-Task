@@ -7,12 +7,12 @@ using AutoMapper;
 
 namespace Akvelon.TestTask.LogicLevel;
 
-public class ProjectBll : IProjectBll
+public class ProjectBllService : IProjectBllService
 {
     private readonly IProjectProvider _projectProvider;
     private readonly IMapper _mapper;
 
-    public ProjectBll(IProjectProvider projectProvider, IMapper mapper)
+    public ProjectBllService(IProjectProvider projectProvider, IMapper mapper)
     {
         _projectProvider = projectProvider;
         _mapper = mapper;

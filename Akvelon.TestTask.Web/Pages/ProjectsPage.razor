@@ -1,0 +1,51 @@
+@page "/projects"
+@using Akvelon.TestTask.Contracts.ViewModels
+@using Akvelon.TestTask.DAL.Models
+
+<PageTitle>Your projects</PageTitle>
+
+<a href="/projects/operate/" class="btn btn-success"><span class="oi oi-plus"></span></a>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Status</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Start Date</th>
+        <th scope="col">Finish Date</th>
+        <th scope="col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var project in _projectViewModels)
+    {
+        <tr>
+            <th>@project.Name</th>
+            <td>@project.Status</td>
+            <td>@project.Priority</td>
+            <td>@project.StartDate.ToShortDateString()</td>
+            <td>@project.CompletionDate.ToShortDateString()</td>
+            <td>
+                <a href="@($"/projects/operate/{project.Id}")" class="btn btn-warning"><span class="oi oi-wrench"></span></a>
+                <button type="button" class="btn btn-danger"><span class="oi oi-x"></span></button>
+            </td>
+        </tr>
+    }
+
+    </tbody>
+</table>
+
+@code {
+
+    private List<ProjectViewModel> _projectViewModels = new()
+    {
+        new ProjectViewModel
+        {Id = Guid.NewGuid(), Name = "Project 1", Status = ProjectStatus.NotStarted, Priority = 0},
+        new ProjectViewModel
+        {Id = Guid.NewGuid(), Name = "Project 2", Status = ProjectStatus.Active, Priority = 1},
+        new ProjectViewModel
+        {Id = Guid.NewGuid(), Name = "Project 3", Status = ProjectStatus.Completed, Priority = 0},
+    };
+
+}

@@ -1,6 +1,6 @@
+using Akvelon.TestTask.Contracts.ViewModels;
 using Akvelon.TestTask.DAL.Models;
 using Akvelon.TestTask.LogicLevel.DTOs;
-using Akvelon.TestTask.ViewModels;
 using AutoMapper;
 
 namespace Akvelon.TestTask.AutoMapperProfiles;

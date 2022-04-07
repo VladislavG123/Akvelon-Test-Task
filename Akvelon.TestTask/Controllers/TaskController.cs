@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using Akvelon.TestTask.Contracts.ViewModels;
 using Akvelon.TestTask.LogicLevel.Abstract;
 using Akvelon.TestTask.LogicLevel.DTOs;
-using Akvelon.TestTask.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +10,12 @@ namespace Akvelon.TestTask.Controllers;
 [Route("api/tasks")]
 public class TaskController : ControllerBase
 {
-    private readonly ITaskBll _taskBll;
+    private readonly ITaskBllService _taskBllService;
     private readonly IMapper _mapper;
 
-    public TaskController(ITaskBll taskBll, IMapper mapper)
+    public TaskController(ITaskBllService taskBllService, IMapper mapper)
     {
-        _taskBll = taskBll;
+        _taskBllService = taskBllService;
         _mapper = mapper;
     }
 
@@ -32,11 +32,11 @@ public class TaskController : ControllerBase
         var result = new List<TaskDto>();
         if (projectId is null)
         {
-            result.AddRange(await _taskBll.GetAll(take, skip));
+            result.AddRange(await _taskBllService.GetAll(take, skip));
         }
         else
         {
-            result.AddRange(await _taskBll.GetAllByProjectId((Guid) projectId, take, skip));
+            result.AddRange(await _taskBllService.GetAllByProjectId((Guid) projectId, take, skip));
         }
 
         return Ok(result.Select(x => _mapper.Map<TaskViewModel>(x)).ToList());
@@ -52,7 +52,7 @@ public class TaskController : ControllerBase
     {
         try
         {
-            var result = await _taskBll.GetById(id);
+            var result = await _taskBllService.GetById(id);
 
             return Ok(_mapper.Map<TaskDto>(result));
         }
@@ -72,7 +72,7 @@ public class TaskController : ControllerBase
     {
         try
         {
-            await _taskBll.Create(_mapper.Map<TaskCreationDto>(createViewModel));
+            await _taskBllService.Create(_mapper.Map<TaskCreationDto>(createViewModel));
 
             return NoContent();
         }
@@ -93,7 +93,7 @@ public class TaskController : ControllerBase
     {
         try
         {
-            await _taskBll.AttachToProject(id, projectId);
+            await _taskBllService.AttachToProject(id, projectId);
 
             return NoContent();
         }
@@ -117,7 +117,7 @@ public class TaskController : ControllerBase
 
         try
         {
-            await _taskBll.Edit(request);
+            await _taskBllService.Edit(request);
 
             return NoContent();
         }
@@ -137,7 +137,7 @@ public class TaskController : ControllerBase
     {
         try
         {
-            await _taskBll.Delete(id);
+            await _taskBllService.Delete(id);
 
             return NoContent();
         }

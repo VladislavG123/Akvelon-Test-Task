@@ -8,5 +8,6 @@ public class ProjectEntity : Entity
     public ProjectStatus Status { get; set; }
     public int Priority { get; set; }
     
-    public virtual ICollection<TaskEntity> Tasks { get; set; }
+    
+    public virtual Guid UserId { get; set; }
 }

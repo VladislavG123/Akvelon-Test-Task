@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Akvelon.TestTask.Contracts\Akvelon.TestTask.Contracts.csproj" />
       <ProjectReference Include="..\Akvelon.TestTask.DAL\Akvelon.TestTask.DAL.csproj" />
       <ProjectReference Include="..\Akvelon.TestTask.LogicLevel\Akvelon.TestTask.LogicLevel.csproj" />
     </ItemGroup>

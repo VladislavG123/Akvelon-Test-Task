@@ -1,6 +1,6 @@
 using Akvelon.TestTask.DAL.DTOs;
 
-namespace Akvelon.TestTask.ViewModels;
+namespace Akvelon.TestTask.Contracts.ViewModels;
 
 public class ProjectFilteringViewModel
 {

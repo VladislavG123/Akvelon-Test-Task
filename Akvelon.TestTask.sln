@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akvelon.TestTask.LogicLevel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akvelon.TestTask.DAL", "Akvelon.TestTask.DAL\Akvelon.TestTask.DAL.csproj", "{182907A6-E599-4B69-A687-DDDA04B3D6E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akvelon.TestTask.Web", "Akvelon.TestTask.Web\Akvelon.TestTask.Web.csproj", "{6DC2C8BA-357E-4A1C-BA10-6624B8E9B97D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akvelon.TestTask.Contracts", "Akvelon.TestTask.Contracts\Akvelon.TestTask.Contracts.csproj", "{3F54B1D9-BC68-4D81-A680-C8611CDE3E54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{182907A6-E599-4B69-A687-DDDA04B3D6E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{182907A6-E599-4B69-A687-DDDA04B3D6E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{182907A6-E599-4B69-A687-DDDA04B3D6E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DC2C8BA-357E-4A1C-BA10-6624B8E9B97D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DC2C8BA-357E-4A1C-BA10-6624B8E9B97D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DC2C8BA-357E-4A1C-BA10-6624B8E9B97D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DC2C8BA-357E-4A1C-BA10-6624B8E9B97D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F54B1D9-BC68-4D81-A680-C8611CDE3E54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F54B1D9-BC68-4D81-A680-C8611CDE3E54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F54B1D9-BC68-4D81-A680-C8611CDE3E54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F54B1D9-BC68-4D81-A680-C8611CDE3E54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

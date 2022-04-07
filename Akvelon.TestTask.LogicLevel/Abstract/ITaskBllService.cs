@@ -1,9 +1,8 @@
-using Akvelon.TestTask.DAL.Models;
 using Akvelon.TestTask.LogicLevel.DTOs;
 
 namespace Akvelon.TestTask.LogicLevel.Abstract;
 
-public interface ITaskBll
+public interface ITaskBllService
 {
     Task Create(TaskCreationDto task);
 

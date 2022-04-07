@@ -31,9 +31,10 @@ public class EntityTaskProvider : EntityProvider<ApplicationContext, TaskEntity,
 
         if (projectId is not null)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id.Equals(projectId));
+            var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id.Equals(projectId))
+                ?? throw new ArgumentException("Project is not found");
 
-            task.Project = project;
+            task.ProjectId = project.Id;
         }
         else
         {

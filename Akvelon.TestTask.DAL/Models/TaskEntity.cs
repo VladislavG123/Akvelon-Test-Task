@@ -8,7 +8,7 @@ public class TaskEntity : Entity
     public string Description { get; set; }
     public int Priority { get; set; }
     public TaskStatus Status { get; set; }
-    
-    public Guid? ProjectId { get; set; }
-    public virtual ProjectEntity Project { get; set; }
+
+    public virtual Guid UserId { get; set; }
+    public virtual Guid? ProjectId { get; set; }
 }

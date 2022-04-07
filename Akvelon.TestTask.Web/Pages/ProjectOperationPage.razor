@@ -1,0 +1,12 @@
+@page "/projects/operate/{ProjectId:guid?}"
+
+<PageTitle>Project Operation</PageTitle>
+
+<h1>@(ProjectId?.ToString() ?? "No id" )</h1>
+
+@code {
+
+    [Parameter]
+    public Guid? ProjectId { get; set; }  
+    
+}

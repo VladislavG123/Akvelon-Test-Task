@@ -23,8 +23,8 @@ public class ConfigureServicesAppServices
 
         #region Blls
 
-        services.AddScoped<ITaskBll, TaskBll>();
-        services.AddScoped<IProjectBll, ProjectBll>();
+        services.AddScoped<ITaskBllService, TaskBllService>();
+        services.AddScoped<IProjectBllService, ProjectBllService>();
 
         #endregion
     }

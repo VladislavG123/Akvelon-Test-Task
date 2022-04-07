@@ -3,7 +3,7 @@ using Akvelon.TestTask.LogicLevel.DTOs;
 
 namespace Akvelon.TestTask.LogicLevel.Abstract;
 
-public interface IProjectBll
+public interface IProjectBllService
 {
     Task Create(ProjectCreationDto project);
 
