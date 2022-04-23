@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Components.Authorization;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 
+var url = "http://localhost:5289/";
+//var url = "https://bazarjok-group.com:50000/";
 
 builder.Services.AddScoped(
     sp => new HttpClient
-        {BaseAddress = new Uri("http://localhost:5289/")});
+        {BaseAddress = new Uri(url)});
 
 #region Apis
 

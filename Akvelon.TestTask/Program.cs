@@ -5,8 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigureServicesAppServices.ConfigureServices(builder.Services, builder.Configuration);
 
-//ConfigureServicesEntityProviders.ConfigureServices(builder.Services, builder.Configuration);
-ConfigureServicesMongoProviders.ConfigureServices(builder.Services, builder.Configuration);
+ConfigureServicesEntityProviders.ConfigureServices(builder.Services, builder.Configuration);
+//ConfigureServicesMongoProviders.ConfigureServices(builder.Services, builder.Configuration);
 
 ConfigureServicesBase.ConfigureServices(builder.Services, builder.Configuration);
 ConfigureServicesSwagger.ConfigureServices(builder.Services, builder.Configuration);
