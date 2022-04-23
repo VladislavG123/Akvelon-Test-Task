@@ -5,6 +5,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
+COPY ["Akvelon.TestTask.Contracts/Akvelon.TestTask.Contracts.csproj", "Akvelon.TestTask.Contracts/"]
+COPY ["Akvelon.TestTask.DAL/Akvelon.TestTask.DAL.csproj", "Akvelon.TestTask.DAL/"]
+COPY ["Akvelon.TestTask.LogicLevel/Akvelon.TestTask.LogicLevel.csproj", "Akvelon.TestTask.LogicLevel/"]
 COPY ["Akvelon.TestTask/Akvelon.TestTask.csproj", "Akvelon.TestTask/"]
 RUN dotnet restore "Akvelon.TestTask/Akvelon.TestTask.csproj"
 COPY . .
