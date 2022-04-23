@@ -57,7 +57,7 @@ public class ProjectBllService : IProjectBllService
         project.Status = editDto.Status;
         project.Priority = editDto.Priority;
         
-        await _projectProvider.Edit(_mapper.Map<ProjectEntity>(editDto));
+        await _projectProvider.Edit(project);
     }
 
     public async Task Delete(Guid id)

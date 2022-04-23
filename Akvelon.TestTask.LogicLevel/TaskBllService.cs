@@ -51,7 +51,7 @@ public class TaskBllService : ITaskBllService
         var task = await _taskProvider.GetById(taskId);
         if (task is null)
         {
-            throw new ArgumentException($"Task with id ${taskId} is not found");
+            throw new ArgumentException($"Task with id {taskId} is not found");
         }
 
         if (projectId is not null) 
@@ -59,7 +59,7 @@ public class TaskBllService : ITaskBllService
             var project = await _projectProvider.GetById((Guid) projectId);
             if (project is null)
             {
-                throw new ArgumentException($"Project with id ${projectId} is not found");
+                throw new ArgumentException($"Project with id {projectId} is not found");
             }
         }
 
