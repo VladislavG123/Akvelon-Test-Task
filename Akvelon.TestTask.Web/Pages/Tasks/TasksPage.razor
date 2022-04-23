@@ -1,0 +1,184 @@
+@page "/tasks"
+@page "/tasks/{projectId:guid}"
+@using OneOf
+@using Akvelon.TestTask.Web.Data.Services
+@using Akvelon.TestTask.Contracts.ViewModels
+@using Akvelon.TestTask.Web.Data.Apis
+@using Akvelon.TestTask.Web.Data.ComponentOptions
+@using Akvelon.TestTask.Web.Pages.Projects
+@using TaskStatus = Akvelon.TestTask.DAL.Models.TaskStatus
+@inject ModalService ModalService
+@inject ILocalStorageService LocalStorageService
+@inject TaskApi TaskApi 
+
+<Row>
+    <Col Span="8">
+        <h1>Todo</h1>
+
+        @if (IsLoading)
+        {
+            <div class="example">
+                <Spin/>
+            </div>
+        }
+        else
+        {
+            @foreach (var task in _listOfData.Where(x => x.Status == TaskStatus.ToDo))
+            {
+                <Card Style="width:300px; margin-bottom: 30px;">
+                    <TitleTemplate>
+                        <Badge Count="@task.Priority" Style="margin-right: 10px"/>
+                        @task.Name
+                    </TitleTemplate>
+                    <Extra>
+                        <Icon Type="step-forward" Theme="outline" OnClick="async () => { await ChangeStatus(task, TaskStatus.InProgress); }"/>
+                    </Extra>
+                    <Body>
+                    <p>@task.Description</p>
+                    <br>
+                    <Icon Type="edit" Theme="outline" OnClick="async () => { await OpenTemplate(task.Id); }"/>
+                    </Body>
+                </Card>
+            }     
+        }
+
+       
+    </Col>
+    <Col Span="8">
+        <h1>In Progress</h1>
+
+        @if (IsLoading)
+        {
+            <div class="example">
+                <Spin/>
+            </div>
+        }
+        else
+        {
+            @foreach (var task in _listOfData.Where(x => x.Status == TaskStatus.InProgress))
+            {
+                <Card Style="width:300px; margin-bottom: 30px;">
+                    <TitleTemplate>
+                        <Badge Count="@task.Priority" Style="margin-right: 10px"/>
+                        @task.Name
+                    </TitleTemplate>
+                    <Extra>
+                        <Icon Type="step-backward" Theme="outline" OnClick="async () => { await ChangeStatus(task, TaskStatus.ToDo); }"/>
+                        <Icon Type="step-forward" Theme="outline" OnClick="async () => { await ChangeStatus(task, TaskStatus.Done); }"/>
+                    </Extra>
+                    <Body>
+                    <p>@task.Description</p>
+                    <br>
+                    <Icon Type="edit" Theme="outline" OnClick="async () => { await OpenTemplate(task.Id); }"/>
+                    </Body>
+                </Card>
+            }    
+        }
+
+        
+    </Col>
+    <Col Span="8">
+        <h1>Done</h1>
+
+        @if (IsLoading)
+        {
+            <div class="example">
+                <Spin/>
+            </div>
+        }
+        else
+        {
+            @foreach (var task in _listOfData.Where(x => x.Status == TaskStatus.Done))
+            {
+                <Card Style="width:300px; margin-bottom: 30px;">
+                    <TitleTemplate>
+                        <Badge Count="@task.Priority" Style="margin-right: 10px"/>
+                        @task.Name
+                    </TitleTemplate>
+                    <Extra>
+                        <Icon Type="step-backward" Theme="outline" OnClick="async () => { await ChangeStatus(task, TaskStatus.InProgress); }"/>
+                    </Extra>
+                    <Body>
+                    <p>@task.Description</p>
+                    <br>
+                    <Icon Type="edit" Theme="outline" OnClick="async () => { await OpenTemplate(task.Id); }"/>
+                    </Body>
+                </Card>
+            }    
+        }
+
+    </Col>
+</Row>
+
+@code {
+
+    [Parameter]
+    public Guid? ProjectId { get; set; }
+
+    public bool IsLoading { get; set; }
+
+    List<TaskViewModel> _listOfData = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await OnInitializedAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        await InvokeAsync(StateHasChanged);
+        
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        _listOfData = await TaskApi.GetAll(claims.Token, projectId: ProjectId);
+
+        IsLoading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ChangeStatus(TaskViewModel task, TaskStatus newStatus)
+    {
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        await TaskApi.Edit(task.Id, new TaskCreateViewModel
+        {
+            Name = task.Name, Description = task.Description, Priority = task.Priority, Status = newStatus
+        }, claims.Token);
+
+        await OnInitializedAsync();
+    }
+
+    private ModalRef _modalRef;
+
+    private async Task OpenTemplate(Guid id)
+    {
+        var templateOptions = new TaskComponentOption()
+        {
+            Id = id,
+            Context = _listOfData.Where(x => x.Id.Equals(id)).Select(x => new TaskCreateViewModel
+            {
+                Name = x.Name,
+                Description = x.Description,
+                Priority = x.Priority,
+                Status = x.Status
+            }).FirstOrDefault() ?? new TaskCreateViewModel(),
+            IsPost = id == Guid.Empty,
+            ProjectId = ProjectId
+        };
+
+        var modalConfig = new ModalOptions
+        {
+            Footer = new OneOf<string, RenderFragment>(),
+            Title = (id.Equals(Guid.Empty) ? "Creation" : "Modifying") + " of Task"
+        };
+
+        _modalRef = await ModalService
+            .CreateModalAsync<TasksCreationModalForm, TaskComponentOption>
+            (modalConfig, templateOptions);
+
+        _modalRef.OnClose = async () => { await OnInitializedAsync(); };
+    }
+
+}
+

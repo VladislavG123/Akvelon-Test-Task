@@ -3,19 +3,24 @@ using Akvelon.TestTask.Contracts.ViewModels;
 using Akvelon.TestTask.LogicLevel.Abstract;
 using Akvelon.TestTask.LogicLevel.DTOs;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace Akvelon.TestTask.Controllers;
 
 [Route("api/tasks")]
+[Authorize]
 public class TaskController : ControllerBase
 {
     private readonly ITaskBllService _taskBllService;
+    private readonly IUserBllService _userBllService;
     private readonly IMapper _mapper;
 
-    public TaskController(ITaskBllService taskBllService, IMapper mapper)
+    public TaskController(ITaskBllService taskBllService, IUserBllService userBllService, IMapper mapper)
     {
         _taskBllService = taskBllService;
+        _userBllService = userBllService;
         _mapper = mapper;
     }
 
@@ -29,14 +34,18 @@ public class TaskController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(Guid? projectId = null, int take = Int32.MaxValue, int skip = 0)
     {
+        var user = await _userBllService
+            .GetUserByToken(Request.Headers[HeaderNames.Authorization]
+                .ToArray()[0].Replace("Bearer ", ""));
+        
         var result = new List<TaskDto>();
         if (projectId is null)
         {
-            result.AddRange(await _taskBllService.GetAll(take, skip));
+            result.AddRange(await _taskBllService.GetAll(user.Id, take, skip));
         }
         else
         {
-            result.AddRange(await _taskBllService.GetAllByProjectId((Guid) projectId, take, skip));
+            result.AddRange(await _taskBllService.GetAllByProjectId((Guid) projectId, user.Id, take, skip));
         }
 
         return Ok(result.Select(x => _mapper.Map<TaskViewModel>(x)).ToList());
@@ -50,9 +59,13 @@ public class TaskController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
+        var user = await _userBllService
+            .GetUserByToken(Request.Headers[HeaderNames.Authorization]
+                .ToArray()[0].Replace("Bearer ", ""));
+        
         try
         {
-            var result = await _taskBllService.GetById(id);
+            var result = await _taskBllService.GetById(user.Id, id);
 
             return Ok(_mapper.Map<TaskDto>(result));
         }
@@ -70,9 +83,16 @@ public class TaskController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] TaskCreateViewModel createViewModel)
     {
+        var user = await _userBllService
+            .GetUserByToken(Request.Headers[HeaderNames.Authorization]
+                .ToArray()[0].Replace("Bearer ", ""));
+        
+        var dto = _mapper.Map<TaskCreationDto>(createViewModel);
+        dto.UserId = user.Id;
+        
         try
         {
-            await _taskBllService.Create(_mapper.Map<TaskCreationDto>(createViewModel));
+            await _taskBllService.Create(dto);
 
             return NoContent();
         }

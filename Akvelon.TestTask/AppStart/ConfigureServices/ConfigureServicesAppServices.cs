@@ -11,21 +11,8 @@ public class ConfigureServicesAppServices
 {
     public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("PostgresDb")));
-
-        #region Providers
-
-        services.AddScoped<ITaskProvider, EntityTaskProvider>();
-        services.AddScoped<IProjectProvider, EntityProjectProvider>();
-
-        #endregion
-
-        #region Blls
-
         services.AddScoped<ITaskBllService, TaskBllService>();
         services.AddScoped<IProjectBllService, ProjectBllService>();
-
-        #endregion
+        services.AddScoped<IUserBllService, UserBllService>();
     }
 }

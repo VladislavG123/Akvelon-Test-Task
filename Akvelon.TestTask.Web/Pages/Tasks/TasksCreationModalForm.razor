@@ -1,0 +1,113 @@
+@using Microsoft.AspNetCore.Components
+@using Akvelon.TestTask.Contracts.ViewModels
+@using Akvelon.TestTask.Web.Data.Apis
+@using Akvelon.TestTask.Web.Data.ComponentOptions
+@using Akvelon.TestTask.Web.Data.Services
+@using Microsoft.Extensions.Configuration
+@inherits FeedbackComponent<Akvelon.TestTask.Web.Data.ComponentOptions.TaskComponentOption>
+@inject MessageService Message
+@inject TaskApi TaskApi
+@inject ProjectApi ProjectApi
+@inject ILocalStorageService LocalStorageService
+@inject IConfiguration Configuration
+
+<Form
+    @ref="_form"
+    ValidateMode="FormValidateMode.Default"
+    ValidateOnChange="false"
+    Model="@_model.Context"
+    Layout="@FormLayout.Vertical"
+    OnFinish="OnFinish"
+    OnFinishFailed="OnFinishFailed">
+
+    <FormItem Label="Name:">
+        <Input @bind-Value="@context.Name"/>
+    </FormItem>
+
+    <FormItem Label="Details:">
+        <Input @bind-Value="@context.Description"/>
+    </FormItem>
+
+    <FormItem Label="Priority:">
+        <Input @bind-Value="@context.Priority"/>
+    </FormItem>
+
+    @if (!_model.IsPost && IsLoaded)
+    {
+        var current = _model.ProjectId is null || _model.ProjectId.Equals(Guid.Empty)
+            ? "Not Selected"
+            : _projects.FirstOrDefault(x => x.Id.Equals(_model.ProjectId))?.Name ?? " Not Selected";
+
+
+        <p>Current: @current</p>
+        <FormItem>
+            <Select DataSource="@_projects"
+                    @bind-Value="@_model.ProjectId"
+                    LabelName="@nameof(ProjectViewModel.Name)"
+                    ValueName="@nameof(ProjectViewModel.Id)"
+                    Placeholder="Select a project"
+                    DefaultActiveFirstItem="false"
+                    EnableSearch>
+            </Select>
+        </FormItem>
+    }
+
+    <FormItem>
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+            @(_model.IsPost ? "Add" : "Edit")
+        </Button>
+    </FormItem>
+</Form>
+
+<br/>
+<br/>
+
+
+@code {
+    public bool IsLoaded { get; set; }
+    private AntDesign.Form<TaskCreateViewModel> _form;
+
+    private TaskComponentOption _model;
+
+    private List<ProjectViewModel> _projects;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = base.Options ?? new TaskComponentOption();
+
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        _projects = await ProjectApi.GetAll(claims.Token);
+        
+        IsLoaded = true;
+        await base.OnInitializedAsync();
+    }
+
+    private async void OnFinish(EditContext editContext)
+    {
+        if (!_form.Validate())
+        {
+            return;
+        }
+
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        if (_model.IsPost)
+        {
+            await TaskApi.Create(_model.Context, claims.Token);
+        }
+        else
+        {
+            await TaskApi.Edit(_model.Id, _model.Context, claims.Token);
+            await TaskApi.AttachToProject(_model.Id, _model.ProjectId, claims.Token);
+        }
+
+        _ = base.FeedbackRef.CloseAsync();
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        Message.Error("Ошибка валидации");
+    }
+
+}

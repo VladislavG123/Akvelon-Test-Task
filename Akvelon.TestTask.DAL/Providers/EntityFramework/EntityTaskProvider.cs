@@ -13,10 +13,12 @@ public class EntityTaskProvider : EntityProvider<ApplicationContext, TaskEntity,
         _context = context;
     }
 
-    public async Task<List<TaskEntity>> GetAllByProjectId(Guid? projectId, int take = Int32.MaxValue, int skip = 0)
+    public async Task<List<TaskEntity>> GetAllByProjectId(Guid? projectId, Guid userId, int take = Int32.MaxValue, int skip = 0)
     {
-        return await _context.Tasks.Where(x => projectId == null ? 
-            x.ProjectId == null : x.ProjectId != null && x.ProjectId.Equals(projectId))
+        return await _context.Tasks.Where(x => 
+                (projectId == null ? x.ProjectId == null : x.ProjectId != null)
+                && x.ProjectId.Equals(projectId) 
+                && x.UserId.Equals(userId))
             .OrderByDescending(x => x.CreationDate).Skip(skip).Take(take).ToListAsync();
     }
 

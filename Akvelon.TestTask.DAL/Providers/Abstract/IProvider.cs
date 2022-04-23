@@ -7,8 +7,8 @@ public interface IProvider<TEntity, in TId>
 {
     Task<List<TEntity>> GetAll(int take = int.MaxValue, int skip = 0);
     Task<TEntity> GetById(TId id);
-    Task<List<TEntity>> Get(Func<TEntity, bool> predicate, int take = int.MaxValue, int skip = 0);
-    Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
+    Task<List<TEntity>> Get(Expression<Func<TEntity, bool>> predicate, int take = int.MaxValue, int skip = 0);
+    Task<TEntity?> FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
     Task Add(TEntity added);
     Task AddRange(IEnumerable<TEntity> added);
     Task Edit(TEntity edited);

@@ -21,7 +21,8 @@ public class EntityProjectProvider : EntityProvider<ApplicationContext, ProjectE
             from project in _context.Projects
             where project.StartDate >= filteringDto.StartAt &&
                   project.CompletionDate <= filteringDto.EndAt &&
-                  project.Name.Contains(filteringDto.ProjectName)
+                  project.Name.Contains(filteringDto.ProjectName) &&
+                  project.UserId.Equals(filteringDto.UserId)
             select project;
 
         if (ordering == ProjectOrdering.Priority)

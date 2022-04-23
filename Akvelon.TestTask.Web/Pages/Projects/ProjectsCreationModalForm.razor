@@ -1,0 +1,103 @@
+@using Microsoft.AspNetCore.Components
+@using Akvelon.TestTask.Contracts.ViewModels
+@using Akvelon.TestTask.Web.Data.Apis
+@using Akvelon.TestTask.Web.Data.ComponentOptions
+@using Akvelon.TestTask.Web.Data.Services
+@using Microsoft.Extensions.Configuration
+@inherits FeedbackComponent<Akvelon.TestTask.Web.Data.ComponentOptions.ProjectComponentOption>
+@inject MessageService Message
+@inject ProjectApi ProjectApi
+@inject ILocalStorageService LocalStorageService
+@inject IConfiguration Configuration
+
+<Form
+    @ref="_form"
+    ValidateMode="FormValidateMode.Default"
+    ValidateOnChange="false"
+    Model="@_model.Context"
+    Layout="@FormLayout.Vertical"
+    OnFinish="OnFinish"
+    OnFinishFailed="OnFinishFailed">
+
+    <FormItem Label="Name:">
+        <Input @bind-Value="@context.Name"/>
+    </FormItem>
+
+    <FormItem Label="Priority:">
+        <Input @bind-Value="@context.Priority"/>
+    </FormItem>
+
+    <FormItem Label="Status:">
+        <span>NotStarted Active Completed</span>
+        <Input @bind-Value="@context.Status"/>
+    </FormItem>
+
+    <FormItem Label="Start date:">
+        <Input @bind-Value="@context.StartDate"/>
+    </FormItem>
+
+    <FormItem Label="CompletionDate:">
+        <Input @bind-Value="@context.CompletionDate"/>
+    </FormItem>
+
+
+    <FormItem>
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+            @(_model.IsPost ? "Add" : "Edit")
+        </Button>
+    </FormItem>
+</Form>
+
+<br/>
+<br/>
+
+
+@code {
+    private AntDesign.Form<ProjectCreationViewModel> _form;
+
+    private ProjectComponentOption _model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = base.Options ?? new ProjectComponentOption();
+
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        await base.OnInitializedAsync();
+    }
+
+    private async void OnFinish(EditContext editContext)
+    {
+        if (!_form.Validate())
+        {
+            return;
+        }
+
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        if (_model.IsPost)
+        {
+            await ProjectApi.Create(_model.Context, claims.Token);
+        }
+        else
+        {
+            var model = new ProjectEditViewModel
+            {
+                StartDate = _model.Context.StartDate,
+                CompletionDate = _model.Context.CompletionDate,
+                Name = _model.Context.Name,
+                Status = _model.Context.Status,
+                Priority = _model.Context.Priority
+            };
+
+            await ProjectApi.Edit(_model.Id, model, claims.Token);
+        }
+        _ = base.FeedbackRef.CloseAsync();
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        Message.Error("Ошибка валидации");
+    }
+
+}

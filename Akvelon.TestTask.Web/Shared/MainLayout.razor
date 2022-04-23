@@ -1,17 +1,166 @@
-﻿@inherits LayoutComponentBase
+﻿@using Akvelon.TestTask.Web.Data.Services
+@using Akvelon.TestTask.Contracts.ViewModels
+@using Akvelon.TestTask.DAL.Models
+@using Akvelon.TestTask.Web.Data.Apis
+@using Akvelon.TestTask.Web.Data.ComponentOptions
+@using Akvelon.TestTask.Web.Pages.Tasks
+@inherits LayoutComponentBase
+@using OneOf
+@attribute [Authorize]
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager NavigationManager
+@inject ProjectApi ProjectApi
+@inject ModalService ModalService
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+<Layout>
+    <AuthorizeView>
+        <NotAuthorized>
+            <RedirectToLogin/>
+        </NotAuthorized>
+    </AuthorizeView>
 
-        <article class="content px-4">
+    <Header Class="site-layout-background" Style="padding: 0; background: #fff; display: flex; align-items: center;">
+        <Space Align="baseline" Style="width: 100%; display: flex; justify-content: space-between; margin: 0 20px;">
+            <SpaceItem>
+                @if (collapsed)
+                {
+                    <Button Type="@ButtonType.Primary"
+                            Color="Color.Blue6"
+                            OnClick="Toggle"
+                            Icon="@IconType.Outline.MenuUnfold"
+                            Style="font-size: 30px;">
+                    </Button>
+                }
+                else
+                {
+                    <Button Type="@ButtonType.Primary"
+                            Color="Color.Blue6"
+                            OnClick="Toggle"
+                            Icon="@IconType.Outline.MenuFold"
+                            Style="font-size: 30px;">
+                    </Button>
+                }
+
+                <Button Type="@ButtonType.Text"
+                        Color="Color.Green6"
+                        OnClick="OpenTemplate"
+                        Icon="@IconType.Outline.Plus">
+                    Add Task
+                </Button>
+            </SpaceItem>
+            <SpaceItem>
+                <img src="img/logo.png" height="60" alt="logo">
+            </SpaceItem>
+            <SpaceItem >
+            </SpaceItem>
+        </Space>
+
+
+    </Header>
+    <Layout Style="margin: 24px 16px 0; overflow: initial;">
+        <Sider Style="height: 100vh; margin-right: 10px" Theme="SiderTheme.Light" Width="250" Collapsible CollapsedWidth="0" Collapsed=@collapsed>
+            <Menu Theme="MenuTheme.Light" Mode="MenuMode.Inline" DefaultSelectedKeys=@(new[] {"dashboard"})>
+                @if (!_isLoading)
+                {
+                    <MenuItem Key="projects" RouterLink="/projects">
+                        <Icon Type="appstore" Theme="outline"/>
+                        <span class="nav-text">Projects</span>
+                    </MenuItem>
+
+                    @foreach (var project in _projectViewModels)
+                    {
+                        var link = $"/tasks/{project.Id}";
+                        <MenuItem Key="@project.Id.ToString()" RouterLink="@link">
+                            <Icon Type="borderless-table" Theme="outline"/>
+                            <span class="nav-text">@project.Name</span>
+                        </MenuItem>
+                    }
+
+                    <MenuItem Key="tasks" RouterLink="/tasks">
+                        <Icon Type="carry-out" Theme="outline"/>
+                        <span class="nav-text">All Tasks</span>
+                    </MenuItem>
+                }
+            </Menu>
+        </Sider>
+        <Content>
             @Body
-        </article>
-    </main>
-</div>
+        </Content>
+    </Layout>
+    <Footer Style="text-align: center;">Taski | Created by <a href="https://www.linkedin.com/in/vladislavg123/">vladislavg123</a></Footer>
+</Layout>
+
+@code
+{
+    private bool _isLoading = true;
+    bool collapsed;
+
+    void Toggle()
+    {
+        collapsed = !collapsed;
+    }
+
+    private UserClaims _claims;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims)) ?? new UserClaims();
+
+        _claims = claims;
+
+        _projectViewModels = await ProjectApi.GetAll(claims.Token);
+
+        _isLoading = false;
+
+        await InvokeAsync(StateHasChanged);
+        await base.OnInitializedAsync();
+    }
+
+    private List<ProjectViewModel> _projectViewModels = new()
+    {
+        new ProjectViewModel
+        {Id = Guid.NewGuid(), Name = "Project 1", Status = ProjectStatus.NotStarted, Priority = 0},
+        new ProjectViewModel
+        {Id = Guid.NewGuid(), Name = "Project 2", Status = ProjectStatus.Active, Priority = 1},
+        new ProjectViewModel
+        {Id = Guid.NewGuid(), Name = "Project 3", Status = ProjectStatus.Completed, Priority = 0},
+    };
+
+    private ModalRef _modalRef;
+
+    private async Task OpenTemplate()
+    {
+        var id = Guid.Empty;
+        
+        var templateOptions = new TaskComponentOption()
+        {
+            Id = id,
+            Context = new TaskCreateViewModel(),
+            IsPost = id == Guid.Empty
+        };
+
+        var modalConfig = new ModalOptions
+        {
+            Footer = new OneOf<string, RenderFragment>(),
+            Title = (id.Equals(Guid.Empty) ? "Creation" : "Modifying") + " of Task"
+        };
+
+        _modalRef = await ModalService
+            .CreateModalAsync<TasksCreationModalForm, TaskComponentOption>
+            (modalConfig, templateOptions);
+
+        _modalRef.OnClose = () =>
+        {
+            OnInitialized();
+            return Task.CompletedTask;
+        };
+    }
+}
+
+<style>
+    .ant-layout-sider-trigger{
+        display: none;
+    }
+    
+</style>

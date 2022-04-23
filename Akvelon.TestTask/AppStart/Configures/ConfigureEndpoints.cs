@@ -13,6 +13,9 @@ public class ConfigureEndpoints
         app.UseRouting();
         app.UseCors("CorsPolicy");
             
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto

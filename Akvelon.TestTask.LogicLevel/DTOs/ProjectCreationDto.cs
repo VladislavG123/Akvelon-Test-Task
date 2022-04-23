@@ -10,4 +10,6 @@ public class ProjectCreationDto
     public string Name { get; set; }
     public ProjectStatus Status { get; set; }
     public int Priority { get; set; }
+
+    public Guid UserId { get; set; }
 }

@@ -3,20 +3,25 @@ using Akvelon.TestTask.DAL.DTOs;
 using Akvelon.TestTask.LogicLevel.Abstract;
 using Akvelon.TestTask.LogicLevel.DTOs;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace Akvelon.TestTask.Controllers;
 
 [Route("/api/projects")]
+[Authorize]
 public class ProjectController : ControllerBase
 {
     private readonly IProjectBllService _projectBllService;
     private readonly IMapper _mapper;
+    private readonly IUserBllService _userBllService;
 
-    public ProjectController(IProjectBllService projectBllService, IMapper mapper)
+    public ProjectController(IProjectBllService projectBllService, IMapper mapper, IUserBllService userBllService)
     {
         _projectBllService = projectBllService;
         _mapper = mapper;
+        _userBllService = userBllService;
     }
 
     /// <summary>
@@ -27,8 +32,16 @@ public class ProjectController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(ProjectFilteringViewModel filtering)
     {
+        var user = await _userBllService
+            .GetUserByToken(Request.Headers[HeaderNames.Authorization]
+                .ToArray()[0].Replace("Bearer ", ""));
+        
+        var dto = _mapper.Map<ProjectFilteringDto>(filtering);
+
+        dto.UserId = user.Id;
+        
         var result = await _projectBllService
-            .GetAll(_mapper.Map<ProjectFilteringDto>(filtering), filtering.Ordering, filtering.Descending);
+            .GetAll(dto, filtering.Ordering, filtering.Descending);
 
         return Ok(result.Select(x => _mapper.Map<ProjectViewModel>(x)).ToList());
     }
@@ -61,16 +74,34 @@ public class ProjectController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ProjectCreationViewModel creationViewModel)
     {
-        await _projectBllService.Create(
-            _mapper.Map<ProjectCreationDto>(creationViewModel));
+        var user = await _userBllService
+            .GetUserByToken(Request.Headers[HeaderNames.Authorization]
+                .ToArray()[0].Replace("Bearer ", ""));
+        
+        var dto = _mapper.Map<ProjectCreationDto>(creationViewModel);
+        dto.UserId = user.Id;
+        
+        await _projectBllService.Create(dto);
 
         return Ok();
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id)
+    public async Task<IActionResult> Update(Guid id, [FromBody] ProjectEditViewModel viewModel)
     {
-        return Problem("Not implemented");
+        var dto = _mapper.Map<ProjectEditDto>(viewModel);
+        dto.Id = id;
+
+        try
+        {
+            await _projectBllService.Edit(dto);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
+
+        return NoContent();
     }
 
     [HttpDelete("{id:guid}")]

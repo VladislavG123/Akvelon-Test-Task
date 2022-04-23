@@ -30,7 +30,7 @@ public class UserBllService : IUserBllService
         // Find data by arguments
         var user = await _userProvider.GetByLogin(login);
 
-        if (user.VerifyPassword(password))
+        if (!user.VerifyPassword(password))
             throw new ArgumentException("Incorrect password");
 
         return GenerateJwtToken(login);

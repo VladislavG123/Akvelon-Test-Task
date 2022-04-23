@@ -9,5 +9,6 @@ public class ProjectFilteringDto
     public int Take { get; set; } = int.MaxValue;
 
     public string ProjectName { get; set; } = "";
+    public Guid UserId { get; set; }
 
 }

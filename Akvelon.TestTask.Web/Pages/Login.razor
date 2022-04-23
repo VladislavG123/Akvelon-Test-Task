@@ -1,0 +1,153 @@
+@page "/login"
+@attribute [AllowAnonymous]
+
+@layout EmptyLayout
+@using System.ComponentModel.DataAnnotations;
+@using Akvelon.TestTask.Contracts.ViewModels
+@using Akvelon.TestTask.Web.Data.Apis
+@using Akvelon.TestTask.Web.Data.Exceptions
+@using Akvelon.TestTask.Web.Data.Services
+@inject MessageService Message
+@inject NavigationManager NavigationManager
+@inject UserApi UserApi
+@inject ILocalStorageService LocalStorageService
+
+<Row Style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-content: center; background: #f3f3f3;">
+    <div Style="display: flex; justify-content: center; margin-bottom: 20px;">
+        <img src="img/logo.png" alt="logo" width="200">
+    </div>
+
+    <Card Style="max-width: 700px; margin: 0 auto;" Title="Вход в аккаунт администратора">
+        <Form @ref="Form"
+              Model="@_model"
+              LabelColSpan="8"
+              WrapperColSpan="16"
+              OnFinish="OnFinish"
+              OnFinishFailed="OnFinishFailed">
+            <FormItem Label="Login">
+                <Input @bind-Value="@context.Login"/>
+            </FormItem>
+            <FormItem Label="Password">
+                <InputPassword @bind-Value="@context.Password"/>
+            </FormItem>
+            <FormItem Label="SignIn or SignUp">
+                <br>
+                <Switch @bind-Value="@context.IsSignIn"/>
+                <br>
+                @if (context.IsSignIn)
+                {
+                    <span>Sign In</span>
+                }
+                else
+                {
+                    <span>Sign Up</span>
+                }
+            </FormItem>
+            <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                <Button Type="@ButtonType.Primary" HtmlType="submit">
+                    Отправить
+                </Button>
+            </FormItem>
+        </Form>
+    </Card>
+</Row>
+
+@code
+{
+    public class Model
+    {
+        [Required]
+        public string Login { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        public bool IsSignIn { get; set; }
+    }
+
+    [Parameter]
+    public Form<Model> Form { get; set; }
+
+    private Model _model = new Model();
+
+    private async Task<string> GetToken()
+    {
+        string? response;
+        
+        if (_model.IsSignIn)
+        {
+            response = await UserApi.SignIn(new UserAuthenticationViewModel
+            {
+                Login = _model.Login,
+                Password = _model.Password
+            });    
+        }
+        else
+        {
+            response = await UserApi.SignUp(new UserAuthenticationViewModel
+            {
+                Login = _model.Login,
+                Password = _model.Password
+            });
+        }
+        
+
+        return response ?? throw new ArgumentException("No token");
+    }
+
+
+    private async Task OnFinish(EditContext editContext)
+    {
+        Form.Loading = true;
+        var errorMessage = string.Empty;
+
+        try
+        {
+            var token = await GetToken();
+            var userViewModel = await UserApi.GetData(token);
+
+
+            var claims = new UserClaims()
+            {
+                Token = token,
+                Login = _model.Login,
+                ExpiredAt = DateTime.UtcNow.AddHours(3)
+            };
+
+            await LocalStorageService.SetAsync(nameof(UserClaims), claims);
+
+            await Message.Success("Успешный вход");
+
+            NavigationManager.NavigateTo("/", true);
+        }
+        catch (BadRequestHttpException e)
+        {
+            errorMessage = _model.IsSignIn ? "Неверный логин или пароль" : "Логин уже занят";
+            Console.WriteLine(e.Message);
+        }
+        catch (UnsupportedHttpException e)
+        {
+            errorMessage = "Необработанная ошибка сервера, если ошибка появилась снова - обратитесь в техподдержку";
+            Console.WriteLine(e.Message);
+        }
+        catch (Exception e)
+        {
+            errorMessage = "Необработанная ошибка клиента, если ошибка появилась снова - обратитесь в техподдержку";
+            Console.WriteLine(e.Message);
+        }
+
+        if (!errorMessage.Equals(String.Empty))
+        {
+            await Message.Error(errorMessage);
+        }
+
+        Form.Loading = false;
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        Message.Error("Данные введены неверно");
+    }
+
+}

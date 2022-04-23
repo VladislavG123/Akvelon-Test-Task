@@ -17,5 +17,6 @@ public class ProjectProfiles : Profile
         CreateMap<ProjectCreationDto, ProjectCreationViewModel>().ReverseMap();
         CreateMap<ProjectCreationDto, ProjectEntity>().ReverseMap();
         CreateMap<ProjectFilteringViewModel, ProjectFilteringDto>().ReverseMap();
+        CreateMap<ProjectEditViewModel, ProjectEditDto>().ReverseMap();
     }
 }

@@ -8,4 +8,6 @@ public class TaskCreationDto
     public string Description { get; set; }
     public int Priority { get; set; }
     public TaskStatus Status { get; set; }
+
+    public Guid UserId { get; set; }
 }

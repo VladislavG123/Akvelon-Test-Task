@@ -1,0 +1,130 @@
+@page "/projects"
+@using OneOf
+@using Akvelon.TestTask.Web.Data.Services
+@using Akvelon.TestTask.Web.Data.Apis
+@using Akvelon.TestTask.Contracts.ViewModels
+@using Akvelon.TestTask.DAL.Models
+@using Akvelon.TestTask.Web.Data.ComponentOptions
+@inject ModalService ModalService
+@inject NavigationManager NavigationManager
+@inject ProjectApi ProjectApi
+@inject ILocalStorageService LocalStorageService
+
+<Button Type="@ButtonType.Primary" Color="Color.Green7" OnClick="() => OpenTemplate(Guid.Empty)" Icon="@IconType.Outline.Plus">Добавить</Button>
+
+<br/>
+<br/>
+
+@if (IsLoading)
+{
+    <div class="example">
+        <Spin />
+    </div>
+}
+else
+{
+    <Table DataSource="_listOfData" TItem="ProjectViewModel" Bordered>
+        <ChildContent Context="data">
+            <Column TData="string">
+                @data.Name
+            </Column>
+            <Column TData="int">
+                @data.Priority
+            </Column>
+
+            <Column TData="DateTime">
+                @data.StartDate
+            </Column>
+            <Column TData="DateTime">
+                @data.CompletionDate
+            </Column>
+
+            <ActionColumn Style="display: flex; align-content: center" Title="Action">
+                <Button Type="@ButtonType.Primary"
+                        OnClick="@(() => OpenTemplate(data.Id))"
+                        Icon="@IconType.Outline.Edit"
+                        Style="margin: 0 10px;">
+                </Button>
+                <Popconfirm Title="Delete?"
+                            OnConfirm="@(() => Delete(data.Id))"
+                            OkText="Yes"
+                            CancelText="No">
+                    <Button Type="@ButtonType.Primary"
+                            Color="Color.Red7"
+                            Icon="@IconType.Outline.Delete">
+                    </Button>
+                </Popconfirm>
+            </ActionColumn>
+
+        </ChildContent>
+    </Table>    
+}
+
+
+<style>
+    .save {
+        margin-right: 8px;
+    }
+</style>
+
+@code{
+    public bool IsLoading { get; set; }
+    List<ProjectViewModel> _listOfData = new();
+
+    protected override async void OnInitialized()
+    {
+        IsLoading = true;
+        await InvokeAsync(StateHasChanged);
+        
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        _listOfData = await ProjectApi.GetAll(claims.Token);
+
+        IsLoading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private ModalRef _modalRef;
+
+    private async void Delete(Guid id)
+    {
+        var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
+
+        await ProjectApi.Delete(id, claims.Token);
+        OnInitialized();
+    }
+
+    private async Task OpenTemplate(Guid id)
+    {
+        var templateOptions = new ProjectComponentOption()
+        {
+            Id = id,
+            Context = _listOfData.Where(x => x.Id.Equals(id)).Select(x => new ProjectCreationViewModel
+            {
+                StartDate = x.StartDate,
+                CompletionDate = x.CompletionDate, 
+                Name = x.Name, 
+                Status = x.Status,
+                Priority = x.Priority
+            }).FirstOrDefault() ?? new ProjectCreationViewModel(),
+            IsPost = id == Guid.Empty
+        };
+
+        var modalConfig = new ModalOptions
+        {
+            Footer = new OneOf<string, RenderFragment>(),
+            Title = (id.Equals(Guid.Empty) ? "Creation" : "Modifying") + " of Project"
+        };
+
+        _modalRef = await ModalService
+            .CreateModalAsync<ProjectsCreationModalForm, ProjectComponentOption>
+            (modalConfig, templateOptions);
+
+        _modalRef.OnClose = () =>
+        {
+            OnInitialized();
+            return Task.CompletedTask;
+        };
+    }
+
+}

@@ -37,14 +37,14 @@ public abstract class EntityProvider<TContext, TEntity, TId> : IProvider<TEntity
         return await _dbSet.FindAsync(id);
     }
 
-    public virtual async Task<List<TEntity>> Get(Func<TEntity, bool> predicate,
+    public virtual async Task<List<TEntity>> Get(Expression<Func<TEntity, bool>> predicate,
         int take = int.MaxValue, int skip = 0)
     {
         // Gets data which are acceded by a query
-        return (await GetAll()).Where(predicate).OrderBy(entity => entity.CreationDate).Skip(skip).Take(take).ToList();
+        return _dbSet.Where(predicate).OrderBy(entity => entity.CreationDate).Skip(skip).Take(take).ToList();
     }
 
-    public virtual async Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task<TEntity?> FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
     {
         return await _dbSet.FirstOrDefaultAsync(predicate);
     }

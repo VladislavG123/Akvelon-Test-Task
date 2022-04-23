@@ -8,12 +8,18 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AntDesign" Version="0.10.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Akvelon.TestTask.Contracts\Akvelon.TestTask.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\img" />
     </ItemGroup>
 
 </Project>

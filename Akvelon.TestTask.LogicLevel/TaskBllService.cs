@@ -24,24 +24,25 @@ public class TaskBllService : ITaskBllService
         await _taskProvider.Add(_mapper.Map<TaskEntity>(task));
     }
 
-    public async Task<List<TaskDto>> GetAll(int take = int.MaxValue, int skip = 0)
+    public async Task<List<TaskDto>> GetAll(Guid userId, int take = int.MaxValue, int skip = 0)
     {
-        var result = await _taskProvider.GetAll(take, skip);
+        var result = 
+            await _taskProvider.Get(x => x.UserId.Equals(userId), take, skip);
 
         return result.Select(x => _mapper.Map<TaskDto>(x)).ToList();
     }
 
-    public async Task<List<TaskDto>> GetAllByProjectId(Guid projectId, int take = int.MaxValue, int skip = 0)
+    public async Task<List<TaskDto>> GetAllByProjectId(Guid projectId, Guid userId, int take = int.MaxValue, int skip = 0)
     {
-        var result = await _taskProvider.GetAllByProjectId(projectId, take, skip);
+        var result = await _taskProvider.GetAllByProjectId(projectId, userId, take, skip);
 
         return result.Select(x => _mapper.Map<TaskDto>(x)).ToList();
     }
     
-    public async Task<TaskDto> GetById(Guid id)
+    public async Task<TaskDto> GetById(Guid id, Guid userId)
     {
         return _mapper.Map<TaskDto>(
-            await _taskProvider.GetById(id) 
+            await _taskProvider.FirstOrDefault(x => x.Id.Equals(id) && x.UserId.Equals(userId)) 
             ?? throw new ArgumentException($"Task with id: {id} is not found"));
     }
 
