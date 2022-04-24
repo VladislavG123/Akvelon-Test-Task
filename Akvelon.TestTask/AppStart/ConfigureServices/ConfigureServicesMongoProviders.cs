@@ -11,7 +11,7 @@ public class ConfigureServicesMongoProviders
     {
         services.Configure<MongoDbOption>(configuration.GetSection("MongoDb"));
         services.AddSingleton<MongoDbContext>();
-        
+
         services.AddScoped<ITaskProvider, MongoTaskProvider>();
         services.AddScoped<IProjectProvider, MongoProjectProvider>();
         services.AddScoped<IUserProvider, MongoUserProvider>();

@@ -2,8 +2,13 @@ using System.Linq.Expressions;
 
 namespace Akvelon.TestTask.DAL.Providers.Abstract;
 
+/// <summary>
+/// Abstract CRUD Provider
+/// </summary>
+/// <typeparam name="TEntity"></typeparam>
+/// <typeparam name="TId"></typeparam>
 public interface IProvider<TEntity, in TId>
-    where TEntity: class
+    where TEntity : class
 {
     Task<List<TEntity>> GetAll(int take = int.MaxValue, int skip = 0);
     Task<TEntity> GetById(TId id);

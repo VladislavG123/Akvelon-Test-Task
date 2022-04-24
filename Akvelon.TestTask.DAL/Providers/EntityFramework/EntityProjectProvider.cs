@@ -17,6 +17,7 @@ public class EntityProjectProvider : EntityProvider<ApplicationContext, ProjectE
     public async Task<List<ProjectEntity>> GetWithFiltering(ProjectFilteringDto filteringDto,
         ProjectOrdering ordering = ProjectOrdering.StartDate, bool descending = false)
     {
+        // Find data by filters
         var expression =
             from project in _context.Projects
             where project.StartDate >= filteringDto.StartAt &&
@@ -25,6 +26,7 @@ public class EntityProjectProvider : EntityProvider<ApplicationContext, ProjectE
                   project.UserId.Equals(filteringDto.UserId)
             select project;
 
+        // Order data
         if (ordering == ProjectOrdering.Priority)
         {
             expression = descending 
@@ -34,10 +36,11 @@ public class EntityProjectProvider : EntityProvider<ApplicationContext, ProjectE
         else
         {
             expression = descending 
-                ? expression.OrderByDescending(x => x.Name) 
-                : expression.OrderBy(x => x.Name);
+                ? expression.OrderByDescending(x => x.StartDate) 
+                : expression.OrderBy(x => x.StartDate);
         }
 
+        // Return data with pagination
         return await expression.Skip(filteringDto.Skip).Take(filteringDto.Take).ToListAsync();
     }
 }

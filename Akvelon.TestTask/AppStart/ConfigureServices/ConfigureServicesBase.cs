@@ -16,7 +16,7 @@ public class ConfigureServicesBase
     public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<SecretOption>(configuration.GetSection("Secrets"));
-            
+
         // configure jwt authentication
         var secrets = configuration.GetSection("Secrets");
         var key = Encoding.ASCII.GetBytes(secrets.GetValue<string>("JWTSecret"));

@@ -24,7 +24,7 @@ public class UserBllService : IUserBllService
         _mapper = mapper;
         SecretOptions = secretOptions.Value;
     }
-    
+
     public async Task<string> SignIn(string login, string password)
     {
         // Find data by arguments
@@ -57,6 +57,7 @@ public class UserBllService : IUserBllService
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(SecretOptions.JwtSecret);
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]
@@ -67,6 +68,7 @@ public class UserBllService : IUserBllService
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature)
         };
+
         var securityToken = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(securityToken);
     }
@@ -96,14 +98,12 @@ public class UserBllService : IUserBllService
 
     /// <summary>
     /// Gets User by headers from Request
-    /// Usage in controllers: 
-    /// GetUserByHeaders(Request.Headers[HeaderNames.Authorization].ToArray()[0].Replace("Bearer ", ""))
     /// </summary>
-    /// <param name="token"></param>
+    /// <param name="jwtToken"></param>
     /// <returns></returns>
-    public async Task<UserDto> GetUserByToken(string token)
+    public async Task<UserDto> GetUserByToken(string jwtToken)
     {
-        var user = await _userProvider.GetByLogin(DecryptToken(token).Login);
+        var user = await _userProvider.GetByLogin(DecryptToken(jwtToken).Login);
 
         return _mapper.Map<UserDto>(user);
     }

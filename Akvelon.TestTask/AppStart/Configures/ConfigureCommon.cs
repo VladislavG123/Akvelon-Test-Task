@@ -24,7 +24,5 @@ public class ConfigureCommon
         app.UseResponseCaching();
         app.UseSwagger();
         app.UseSwaggerUI(ConfigureServicesSwagger.SwaggerSettings);
-
     }
-
 }

@@ -6,5 +6,5 @@ public interface IUserBllService
 {
     Task<string> SignIn(string login, string password);
     Task<string> SignUp(string login, string password);
-    Task<UserDto> GetUserByToken(string token);
+    Task<UserDto> GetUserByToken(string jwtToken);
 }

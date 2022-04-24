@@ -11,7 +11,7 @@ public class ConfigureServicesEntityProviders
     {
         services.AddDbContext<ApplicationContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("PostgresDb")));
-        
+
         services.AddScoped<ITaskProvider, EntityTaskProvider>();
         services.AddScoped<IProjectProvider, EntityProjectProvider>();
         services.AddScoped<IUserProvider, EntityUserProvider>();

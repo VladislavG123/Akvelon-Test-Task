@@ -23,7 +23,7 @@ public class ProjectBllService : IProjectBllService
         await _projectProvider.Add(_mapper.Map<ProjectEntity>(project));
     }
 
-    public async Task<List<ProjectDto>> GetAll(ProjectFilteringDto filteringDto, 
+    public async Task<List<ProjectDto>> GetAll(ProjectFilteringDto filteringDto,
         ProjectOrdering ordering = ProjectOrdering.StartDate, bool @descending = false)
     {
         return (await _projectProvider.GetWithFiltering(filteringDto, ordering, descending)).Select(
@@ -56,7 +56,7 @@ public class ProjectBllService : IProjectBllService
         project.Name = editDto.Name;
         project.Status = editDto.Status;
         project.Priority = editDto.Priority;
-        
+
         await _projectProvider.Edit(project);
     }
 
@@ -68,7 +68,7 @@ public class ProjectBllService : IProjectBllService
         {
             throw new ArgumentException($"Project with id: {id} is not found");
         }
-        
+
         await _projectProvider.Remove(project);
     }
 }

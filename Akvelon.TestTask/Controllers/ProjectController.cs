@@ -35,11 +35,11 @@ public class ProjectController : ControllerBase
         var user = await _userBllService
             .GetUserByToken(Request.Headers[HeaderNames.Authorization]
                 .ToArray()[0].Replace("Bearer ", ""));
-        
+
         var dto = _mapper.Map<ProjectFilteringDto>(filtering);
 
         dto.UserId = user.Id;
-        
+
         var result = await _projectBllService
             .GetAll(dto, filtering.Ordering, filtering.Descending);
 
@@ -77,10 +77,10 @@ public class ProjectController : ControllerBase
         var user = await _userBllService
             .GetUserByToken(Request.Headers[HeaderNames.Authorization]
                 .ToArray()[0].Replace("Bearer ", ""));
-        
+
         var dto = _mapper.Map<ProjectCreationDto>(creationViewModel);
         dto.UserId = user.Id;
-        
+
         await _projectBllService.Create(dto);
 
         return Ok();
@@ -115,7 +115,7 @@ public class ProjectController : ControllerBase
         {
             return BadRequest(e.Message);
         }
-        
+
         return Ok();
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Akvelon.TestTask.DAL.Providers.EntityFramework;
 
-public class EntityUserProvider: EntityProvider<ApplicationContext, UserEntity, Guid>, IUserProvider
+public class EntityUserProvider : EntityProvider<ApplicationContext, UserEntity, Guid>, IUserProvider
 {
     private readonly ApplicationContext _context;
 

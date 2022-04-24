@@ -12,7 +12,7 @@ public class MongoDbContext
     {
         var mongoClient = new MongoClient(
             options.Value.ConnectionString);
-        
+
         _mongoDatabase = mongoClient.GetDatabase(
             options.Value.DatabaseName);
     }

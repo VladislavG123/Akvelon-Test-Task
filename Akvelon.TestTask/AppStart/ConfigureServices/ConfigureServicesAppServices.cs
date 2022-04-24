@@ -9,7 +9,7 @@ namespace Akvelon.TestTask.AppStart.ConfigureServices;
 
 public class ConfigureServicesAppServices
 {
-    public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    public static void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<ITaskBllService, TaskBllService>();
         services.AddScoped<IProjectBllService, ProjectBllService>();

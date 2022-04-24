@@ -17,5 +17,4 @@ public class ApplicationContext : DbContext
     public DbSet<UserEntity> Users { get; set; }
 
     #endregion
-
 }

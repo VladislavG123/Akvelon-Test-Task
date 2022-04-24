@@ -9,7 +9,8 @@ public class MongoTaskProvider : MongoProvider<TaskEntity, Guid>, ITaskProvider
     {
     }
 
-    public async Task<List<TaskEntity>> GetAllByProjectId(Guid? projectId, Guid userId, int take = Int32.MaxValue, int skip = 0)
+    public async Task<List<TaskEntity>> GetAllByProjectId(Guid? projectId, Guid userId, int take = Int32.MaxValue,
+        int skip = 0)
     {
         return await Get(x => x.ProjectId.Equals(projectId) && x.UserId.Equals(userId), take, skip);
     }

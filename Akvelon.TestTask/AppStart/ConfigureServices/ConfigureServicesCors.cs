@@ -12,7 +12,7 @@ public class ConfigureServicesCors
                 builder.AllowAnyHeader();
                 builder.AllowAnyMethod();
                 if (origins is not {Length: > 0}) return;
-                    
+
                 if (origins.Contains("*"))
                 {
                     builder.AllowAnyHeader();
@@ -30,5 +30,4 @@ public class ConfigureServicesCors
             });
         });
     }
-
 }

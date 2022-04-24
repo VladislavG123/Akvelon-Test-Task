@@ -3,13 +3,19 @@ using Akvelon.TestTask.AppStart.ConfigureServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-ConfigureServicesAppServices.ConfigureServices(builder.Services, builder.Configuration);
+ConfigureServicesAppServices.ConfigureServices(builder.Services);
 
-ConfigureServicesEntityProviders.ConfigureServices(builder.Services, builder.Configuration);
-//ConfigureServicesMongoProviders.ConfigureServices(builder.Services, builder.Configuration);
+if (builder.Configuration["Database"] == "mongo")
+{
+    ConfigureServicesMongoProviders.ConfigureServices(builder.Services, builder.Configuration);
+}
+else
+{
+    ConfigureServicesEntityProviders.ConfigureServices(builder.Services, builder.Configuration);
+}
 
 ConfigureServicesBase.ConfigureServices(builder.Services, builder.Configuration);
-ConfigureServicesSwagger.ConfigureServices(builder.Services, builder.Configuration);
+ConfigureServicesSwagger.ConfigureServices(builder.Services);
 ConfigureServicesCors.ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();

@@ -6,7 +6,7 @@ using AutoMapper;
 
 namespace Akvelon.TestTask.LogicLevel;
 
-public class TaskBllService : ITaskBllService 
+public class TaskBllService : ITaskBllService
 {
     private readonly ITaskProvider _taskProvider;
     private readonly IProjectProvider _projectProvider;
@@ -18,7 +18,7 @@ public class TaskBllService : ITaskBllService
         _projectProvider = projectProvider;
         _mapper = mapper;
     }
-    
+
     public async Task Create(TaskCreationDto task)
     {
         await _taskProvider.Add(_mapper.Map<TaskEntity>(task));
@@ -26,23 +26,24 @@ public class TaskBllService : ITaskBllService
 
     public async Task<List<TaskDto>> GetAll(Guid userId, int take = int.MaxValue, int skip = 0)
     {
-        var result = 
+        var result =
             await _taskProvider.Get(x => x.UserId.Equals(userId), take, skip);
 
         return result.Select(x => _mapper.Map<TaskDto>(x)).ToList();
     }
 
-    public async Task<List<TaskDto>> GetAllByProjectId(Guid projectId, Guid userId, int take = int.MaxValue, int skip = 0)
+    public async Task<List<TaskDto>> GetAllByProjectId(Guid projectId, Guid userId, int take = int.MaxValue,
+        int skip = 0)
     {
         var result = await _taskProvider.GetAllByProjectId(projectId, userId, take, skip);
 
         return result.Select(x => _mapper.Map<TaskDto>(x)).ToList();
     }
-    
+
     public async Task<TaskDto> GetById(Guid id, Guid userId)
     {
         return _mapper.Map<TaskDto>(
-            await _taskProvider.FirstOrDefault(x => x.Id.Equals(id) && x.UserId.Equals(userId)) 
+            await _taskProvider.FirstOrDefault(x => x.Id.Equals(id) && x.UserId.Equals(userId))
             ?? throw new ArgumentException($"Task with id: {id} is not found"));
     }
 
@@ -54,7 +55,7 @@ public class TaskBllService : ITaskBllService
             throw new ArgumentException($"Task with id {taskId} is not found");
         }
 
-        if (projectId is not null) 
+        if (projectId is not null)
         {
             var project = await _projectProvider.GetById((Guid) projectId);
             if (project is null)
@@ -74,24 +75,24 @@ public class TaskBllService : ITaskBllService
         {
             throw new ArgumentException($"Task with id: {editDto.Id} is not found");
         }
-        
+
         task.Name = editDto.Name;
         task.Description = editDto.Description;
         task.Priority = editDto.Priority;
         task.Status = editDto.Status;
-        
+
         await _taskProvider.Edit(task);
     }
 
     public async Task Delete(Guid id)
     {
         var task = await _taskProvider.GetById(id);
-        
+
         if (task is null)
         {
             throw new ArgumentException($"Task with id: {id} is not found");
         }
-        
+
         await _taskProvider.Remove(task);
     }
 }

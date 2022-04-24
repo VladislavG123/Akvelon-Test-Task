@@ -32,7 +32,7 @@ public class UserController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     [HttpPost("sign-in")]
     public async Task<IActionResult> SignIn([FromBody] UserAuthenticationViewModel parameter)
     {
@@ -49,14 +49,14 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetDataByToken()
+    public async Task<IActionResult> GetUserDataByToken()
     {
         try
         {
             var data = await _userBllService
                 .GetUserByToken(Request.Headers[HeaderNames.Authorization]
                     .ToArray()[0].Replace("Bearer ", ""));
-            
+
             return Ok(_mapper.Map<UserViewModel>(data));
         }
         catch (ArgumentException e)

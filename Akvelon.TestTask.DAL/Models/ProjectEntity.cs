@@ -7,7 +7,6 @@ public class ProjectEntity : Entity
     public DateTime CompletionDate { get; set; }
     public ProjectStatus Status { get; set; }
     public int Priority { get; set; }
-    
-    
+
     public virtual Guid UserId { get; set; }
 }

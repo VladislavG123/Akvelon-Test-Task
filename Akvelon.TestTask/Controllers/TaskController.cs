@@ -37,7 +37,7 @@ public class TaskController : ControllerBase
         var user = await _userBllService
             .GetUserByToken(Request.Headers[HeaderNames.Authorization]
                 .ToArray()[0].Replace("Bearer ", ""));
-        
+
         var result = new List<TaskDto>();
         if (projectId is null)
         {
@@ -62,7 +62,7 @@ public class TaskController : ControllerBase
         var user = await _userBllService
             .GetUserByToken(Request.Headers[HeaderNames.Authorization]
                 .ToArray()[0].Replace("Bearer ", ""));
-        
+
         try
         {
             var result = await _taskBllService.GetById(user.Id, id);
@@ -74,7 +74,7 @@ public class TaskController : ControllerBase
             return NotFound(e.Message);
         }
     }
-    
+
     /// <summary>
     /// New Task creation
     /// </summary>
@@ -86,10 +86,10 @@ public class TaskController : ControllerBase
         var user = await _userBllService
             .GetUserByToken(Request.Headers[HeaderNames.Authorization]
                 .ToArray()[0].Replace("Bearer ", ""));
-        
+
         var dto = _mapper.Map<TaskCreationDto>(createViewModel);
         dto.UserId = user.Id;
-        
+
         try
         {
             await _taskBllService.Create(dto);
