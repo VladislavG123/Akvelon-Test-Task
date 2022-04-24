@@ -39,10 +39,10 @@
                     <Icon Type="edit" Theme="outline" OnClick="async () => { await OpenTemplate(task.Id); }"/>
                     </Body>
                 </Card>
-            }     
+            }
         }
 
-       
+
     </Col>
     <Col Span="8">
         <h1>In Progress</h1>
@@ -72,10 +72,10 @@
                     <Icon Type="edit" Theme="outline" OnClick="async () => { await OpenTemplate(task.Id); }"/>
                     </Body>
                 </Card>
-            }    
+            }
         }
 
-        
+
     </Col>
     <Col Span="8">
         <h1>Done</h1>
@@ -104,7 +104,7 @@
                     <Icon Type="edit" Theme="outline" OnClick="async () => { await OpenTemplate(task.Id); }"/>
                     </Body>
                 </Card>
-            }    
+            }
         }
 
     </Col>
@@ -128,7 +128,7 @@
     {
         IsLoading = true;
         await InvokeAsync(StateHasChanged);
-        
+
         var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
 
         _listOfData = await TaskApi.GetAll(claims.Token, projectId: ProjectId);
@@ -181,4 +181,3 @@
     }
 
 }
-

@@ -9,7 +9,6 @@
 @attribute [Authorize]
 
 @inject ILocalStorageService LocalStorageService
-@inject NavigationManager NavigationManager
 @inject ProjectApi ProjectApi
 @inject ModalService ModalService
 
@@ -23,7 +22,7 @@
     <Header Class="site-layout-background" Style="padding: 0; background: #fff; display: flex; align-items: center;">
         <Space Align="baseline" Style="width: 100%; display: flex; justify-content: space-between; margin: 0 20px;">
             <SpaceItem>
-                @if (collapsed)
+                @if (_collapsed)
                 {
                     <Button Type="@ButtonType.Primary"
                             Color="Color.Blue6"
@@ -59,7 +58,7 @@
 
     </Header>
     <Layout Style="margin: 24px 16px 0; overflow: initial;">
-        <Sider Style="height: 100vh; margin-right: 10px" Theme="SiderTheme.Light" Width="250" Collapsible CollapsedWidth="0" Collapsed=@collapsed>
+        <Sider Style="height: 100vh; margin-right: 10px" Theme="SiderTheme.Light" Width="250" Collapsible CollapsedWidth="0" Collapsed=@_collapsed>
             <Menu Theme="MenuTheme.Light" Mode="MenuMode.Inline" DefaultSelectedKeys=@(new[] {"dashboard"})>
                 @if (!_isLoading)
                 {
@@ -94,11 +93,11 @@
 @code
 {
     private bool _isLoading = true;
-    bool collapsed;
+    bool _collapsed;
 
     void Toggle()
     {
-        collapsed = !collapsed;
+        _collapsed = !_collapsed;
     }
 
     private UserClaims _claims;
@@ -132,7 +131,7 @@
     private async Task OpenTemplate()
     {
         var id = Guid.Empty;
-        
+
         var templateOptions = new TaskComponentOption()
         {
             Id = id,

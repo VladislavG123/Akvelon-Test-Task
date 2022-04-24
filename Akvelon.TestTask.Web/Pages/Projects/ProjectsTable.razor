@@ -6,7 +6,6 @@
 @using Akvelon.TestTask.DAL.Models
 @using Akvelon.TestTask.Web.Data.ComponentOptions
 @inject ModalService ModalService
-@inject NavigationManager NavigationManager
 @inject ProjectApi ProjectApi
 @inject ILocalStorageService LocalStorageService
 
@@ -18,7 +17,7 @@
 @if (IsLoading)
 {
     <div class="example">
-        <Spin />
+        <Spin/>
     </div>
 }
 else
@@ -57,7 +56,7 @@ else
             </ActionColumn>
 
         </ChildContent>
-    </Table>    
+    </Table>
 }
 
 
@@ -75,7 +74,7 @@ else
     {
         IsLoading = true;
         await InvokeAsync(StateHasChanged);
-        
+
         var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
 
         _listOfData = await ProjectApi.GetAll(claims.Token);
@@ -102,8 +101,8 @@ else
             Context = _listOfData.Where(x => x.Id.Equals(id)).Select(x => new ProjectCreationViewModel
             {
                 StartDate = x.StartDate,
-                CompletionDate = x.CompletionDate, 
-                Name = x.Name, 
+                CompletionDate = x.CompletionDate,
+                Name = x.Name,
                 Status = x.Status,
                 Priority = x.Priority
             }).FirstOrDefault() ?? new ProjectCreationViewModel(),

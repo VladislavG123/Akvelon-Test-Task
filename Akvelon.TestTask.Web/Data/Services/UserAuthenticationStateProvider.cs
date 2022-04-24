@@ -15,7 +15,6 @@ namespace Akvelon.TestTask.Web.Data.Services
             _userApi = userApi;
         }
 
-
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             AuthenticationState CreateAnonymous()
@@ -26,10 +25,10 @@ namespace Akvelon.TestTask.Web.Data.Services
             }
 
             Console.WriteLine("Starting to authorize");
-            
+
             var localClaims = await _localStorageService.GetAsync<UserClaims>(nameof(UserClaims));
-            
-            if (localClaims == null)
+
+            if (localClaims is null)
             {
                 Console.WriteLine("claims are null");
                 return CreateAnonymous();
@@ -69,13 +68,5 @@ namespace Akvelon.TestTask.Web.Data.Services
         {
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
-    }
-
-    public class UserClaims
-    {
-        public string Login { get; set; }
-        public string Token { get; set; }
-        
-        public DateTime ExpiredAt { get; set; }
     }
 }

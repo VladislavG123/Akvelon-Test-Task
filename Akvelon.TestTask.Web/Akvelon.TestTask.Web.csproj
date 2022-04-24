@@ -22,4 +22,13 @@
       <Folder Include="wwwroot\img" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="wwwroot\favicon.ico" />
+      <Content Remove="wwwroot\icon-192.png" />
+    </ItemGroup>
+
 </Project>

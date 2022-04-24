@@ -3,12 +3,10 @@
 @using Akvelon.TestTask.Web.Data.Apis
 @using Akvelon.TestTask.Web.Data.ComponentOptions
 @using Akvelon.TestTask.Web.Data.Services
-@using Microsoft.Extensions.Configuration
 @inherits FeedbackComponent<Akvelon.TestTask.Web.Data.ComponentOptions.ProjectComponentOption>
 @inject MessageService Message
 @inject ProjectApi ProjectApi
 @inject ILocalStorageService LocalStorageService
-@inject IConfiguration Configuration
 
 <Form
     @ref="_form"

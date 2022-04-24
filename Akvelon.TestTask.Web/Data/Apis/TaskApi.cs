@@ -24,7 +24,7 @@ public class TaskApi
         var url = projectId is null
             ? _urlBase + $"?take={take}&skip={skip}"
             : _urlBase + $"?take={take}&skip={skip}&projectId={projectId}";
-        
+
         var response = await _httpClient.GetAsync(url);
 
         if (!response.IsSuccessStatusCode)
@@ -80,7 +80,7 @@ public class TaskApi
             throw new UnsupportedHttpException(await response.Content.ReadAsStringAsync());
         }
     }
-    
+
     public async Task AttachToProject(Guid id, Guid? projectId, string token)
     {
         _httpClient.DefaultRequestHeaders.Authorization =

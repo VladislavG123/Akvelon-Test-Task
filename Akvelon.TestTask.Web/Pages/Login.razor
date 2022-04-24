@@ -74,14 +74,14 @@
     private async Task<string> GetToken()
     {
         string? response;
-        
+
         if (_model.IsSignIn)
         {
             response = await UserApi.SignIn(new UserAuthenticationViewModel
             {
                 Login = _model.Login,
                 Password = _model.Password
-            });    
+            });
         }
         else
         {
@@ -91,7 +91,7 @@
                 Password = _model.Password
             });
         }
-        
+
 
         return response ?? throw new ArgumentException("No token");
     }

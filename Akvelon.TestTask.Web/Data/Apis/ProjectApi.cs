@@ -49,7 +49,6 @@ public class ProjectApi
         return data;
     }
 
-
     public async Task Create(ProjectCreationViewModel parameter, string token)
     {
         _httpClient.DefaultRequestHeaders.Authorization =

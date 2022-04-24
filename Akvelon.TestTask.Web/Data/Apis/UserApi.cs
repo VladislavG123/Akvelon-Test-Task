@@ -15,14 +15,6 @@ public class UserApi
         _httpClient = httpClient;
     }
 
-    /// <summary>
-    /// Post request to api/identity
-    /// </summary>
-    /// <param name="parameter"></param>
-    /// <returns></returns>
-    /// <exception cref="NotFoundHttpException"></exception>
-    /// <exception cref="BadRequestHttpException"></exception>
-    /// <exception cref="UnsupportedHttpException"></exception>
     public async Task<string?> SignIn(UserAuthenticationViewModel parameter)
     {
         var response = await _httpClient.PostAsJsonAsync("api/user/sign-in", parameter);
@@ -42,8 +34,7 @@ public class UserApi
                                                     $"Message: {await response.Content.ReadAsStringAsync()}")
         };
     }
-    
-    
+
     public async Task<string?> SignUp(UserAuthenticationViewModel parameter)
     {
         var response = await _httpClient.PostAsJsonAsync("api/user/sign-up", parameter);
@@ -63,7 +54,6 @@ public class UserApi
                                                     $"Message: {await response.Content.ReadAsStringAsync()}")
         };
     }
-
 
     public async Task<UserViewModel?> GetData(string token)
     {

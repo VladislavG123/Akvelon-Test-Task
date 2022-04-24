@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Akvelon.TestTask.Web;
 using Akvelon.TestTask.Web.Data.Apis;
@@ -8,12 +7,14 @@ using Microsoft.AspNetCore.Components.Authorization;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 
-var url = "http://localhost:5289/";
-//var url = "https://bazarjok-group.com:50000/";
+var url = builder.Configuration["WebApiUrl"] 
+          ?? throw new ArgumentException("Cannot find WebApiUrl in the Configuration file");
 
 builder.Services.AddScoped(
     sp => new HttpClient
-        {BaseAddress = new Uri(url)});
+    {
+        BaseAddress = new Uri(url)
+    });
 
 #region Apis
 
@@ -22,7 +23,6 @@ builder.Services.AddScoped<ProjectApi>();
 builder.Services.AddScoped<TaskApi>();
 
 #endregion
-
 
 #region Authentication
 

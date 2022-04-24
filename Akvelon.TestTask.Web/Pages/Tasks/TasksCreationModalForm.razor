@@ -3,13 +3,11 @@
 @using Akvelon.TestTask.Web.Data.Apis
 @using Akvelon.TestTask.Web.Data.ComponentOptions
 @using Akvelon.TestTask.Web.Data.Services
-@using Microsoft.Extensions.Configuration
 @inherits FeedbackComponent<Akvelon.TestTask.Web.Data.ComponentOptions.TaskComponentOption>
 @inject MessageService Message
 @inject TaskApi TaskApi
 @inject ProjectApi ProjectApi
 @inject ILocalStorageService LocalStorageService
-@inject IConfiguration Configuration
 
 <Form
     @ref="_form"
@@ -78,7 +76,7 @@
         var claims = await LocalStorageService.GetAsync<UserClaims>(nameof(UserClaims));
 
         _projects = await ProjectApi.GetAll(claims.Token);
-        
+
         IsLoaded = true;
         await base.OnInitializedAsync();
     }

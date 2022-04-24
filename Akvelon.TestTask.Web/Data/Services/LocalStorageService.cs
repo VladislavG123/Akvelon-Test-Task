@@ -12,7 +12,7 @@ namespace Akvelon.TestTask.Web.Data.Services
             _jsRuntime = jsRuntime;
         }
 
-        public async Task SetAsync<T>(string key, T item)  where T: class
+        public async Task SetAsync<T>(string key, T item) where T : class
         {
             var data = JsonSerializer.Serialize(item);
             await _jsRuntime.InvokeVoidAsync("set", key, data);
@@ -24,7 +24,7 @@ namespace Akvelon.TestTask.Web.Data.Services
             return Task.CompletedTask;
         }
 
-        public async Task<T> GetAsync<T>(string key)  where T: class
+        public async Task<T> GetAsync<T>(string key) where T : class
         {
             var data = await _jsRuntime.InvokeAsync<string>("get", key);
             return string.IsNullOrEmpty(data) ? null! : JsonSerializer.Deserialize<T>(data)!;
@@ -41,5 +41,4 @@ namespace Akvelon.TestTask.Web.Data.Services
             return Task.CompletedTask;
         }
     }
-
 }
