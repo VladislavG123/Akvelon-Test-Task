@@ -35,7 +35,7 @@ git clone https://github.com/VladislavG123/Akvelon-Test-Task.git
 2. Change all appsettings.json files for own configuration
 
 
-### Usage
+### Usage (FUTURE)
 
 You can use deployed version of the project
 - Frontend: https://bazarjok-group.com:51000/
